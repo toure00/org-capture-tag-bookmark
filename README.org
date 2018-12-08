@@ -3,16 +3,16 @@
 不同之处在于：
 - 此脚本可以在浏览器端预定义org标签，预定义的标签以复选框的形式展示；
 - 此脚本还可以在浏览器端手动添加org标签;
-基于以上不同之处，此脚本可以一定程度的提高使用 ~org-mod~ 做书签的用户的体验，使用户做书签时不必在chrome与emacs之间来回切换.
-使用示例:
+基于以上不同之处，此脚本可以一定程度的提高使用 ~org-capture~ 做书签的用户的体验，使用户做书签时不必在chrome与emacs之间来回切换.
+- 使用示例:
 [[./demonstration.gif]]
-* 使用说明
+** 使用说明
 - 此脚本需要使用 ~org-protocol~ 前置条件参考 [[https://github.com/sprig/org-capture-extension][sprig/org-capture-extension]]
 - 此脚本分为书签版和油猴版，[[./capture.js][capture.js]] 为书签版本，[[./tampermonkey_capture.js][tampermonkey_capture.js]] 为油猴版本，推荐使用 [[./tampermonkey_capture.js][tampermonkey_capture.js]]
-- 书签版可以直接添加书签运行，油猴版需要安装[[https://tamperjmonkey.net/][tampermonkey]]插件运行.
-* 配置说明
-** 脚本配置
-- 此处配置使用的capture 模板
+- 书签版可以直接添加书签运行，油猴版需要安装[[https://tampermonkey.net/][tampermonkey]]插件运行.
+** 配置说明
+*** 脚本配置
+此处配置使用的capture 模板
 #+BEGIN_SRC javascript
   var template = {
       unselected: "pb",
@@ -20,7 +20,7 @@
   };
 #+END_SRC
 
-- 此处定义的经常使用的标签
+此处定义的经常使用的标签
 #+BEGIN_SRC javascript
   var tag_data = {
       classify: ["learn", "book","play", "game", "music", "movie", "other"],
@@ -30,17 +30,17 @@
   };
 #+END_SRC
 
-- 此处定义是否使用 ~org-protocol~ 新版的链接格式
+此处定义是否使用 ~org-protocol~ 新版的链接格式
 #+BEGIN_SRC javascript
   var useNewStyleLinks = true;
 #+END_SRC
 
-- 此处绑定了快捷键,如果默认快捷键没有生效, 可能会是快捷键有冲突,可以修改此处绑定的快捷键 <<keybind>>
+此处绑定了快捷键,如果默认快捷键没有生效, 可能会是快捷键有冲突,可以修改此处绑定的快捷键
 #+BEGIN_SRC javascript
   function keybind(e) {}
 #+END_SRC
 
-** org-capture模板配置
+*** org-capture模板配置
 #+BEGIN_SRC elisp
   (setq org-capture-templates
         `(("pb" "Protocol Bookmarks" entry (file+headline  org-agenda-file-web "Bookmarks")
@@ -49,17 +49,19 @@
           ("pn" "Protocol Bookmarks" entry (file+headline org-agenda-file-web "Notes")
            "* %U - %:annotation  %:initial" :immediate-finish t :kill-buffer t))
 #+END_SRC
-你没有看错，两个模板储量节点名称不一样,其他都是一致的.
-* 使用方式
+你没有看错，两个模板除了节点名称不一样,其他都是一致的.
+** 使用方式
 1. 使用快捷键 ~shift+alt+W~,调出弹出框,可以勾选复选框和手动输入标签,两者可组合使用,也可单独使用;
    手动输入时可输入多个标签,用空格分隔;如果没有标签数据直接提交,会创建一个没有标签的书签.
 
-2. 使用快捷键 ~shift+alt+D~,直接保存书签(无标签)
+2. 使用快捷键 ~shift+alt+D~,直接保存书签(无标签)；
 
-3. 如果提交前页面有选中的文本,会切换到有选中内容的模板
+3. 如果提交前页面有选中的文本,会切换到有选中内容的模板；
 
-4. 如果默认快捷键没有生效,可以修改[[keybind][此处]]绑定的快捷键的函数
+4. 书签版本没有快捷键，使用时点击书签打开弹出框；
 
-* 已知的问题
+5. 如果默认快捷键没有生效,可以修改绑定的快捷键的函数 ~keybind()~ ;
+
+** 已知的问题
 1. 目前已知在[[https://emacs-china.org][emacs-china]] 上使用此脚本会出现问题,原因未知;
 2. 由于每个网站的基本 ~css~ 样式都不同,而脚本生成的 ~html~ 标签会继承网站的 ~css~,所以在不同网站上,会呈现不同的样式;
