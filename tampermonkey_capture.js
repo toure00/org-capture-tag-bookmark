@@ -156,6 +156,9 @@
                 selectcontent=document.getSelection().toString();
                 sendData( );
             }
+            else if (e.keyCode==13){
+                if (document.getElementById(outer_id).style.display=="block") btn_submit();
+            }
             else if (e.keyCode==27){
                 off();
             }
