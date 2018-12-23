@@ -18,7 +18,6 @@
             unselected: "pb",
             selected: "pn",
         };
-
         // 预定义的标签
         var tag_data = {
             classify: ["learn", "book","play", "game", "music", "movie", "other"],
@@ -26,10 +25,17 @@
             editer: ["vim", "emacs", "vscode"],
             score: ["bad", "not_bad", "good", "very_good", "nonsuch"]
         };
-
+        // 此处设定快捷键,前置键为Shift+Alt
+        var keybinds = {
+            // 使用tag面板
+            use_tag_panel:{key:"W",func:on},
+            // 使用浏览器自带弹窗,此方式只能手动输入tag
+            use_prompt:{key:"U",func:showPrompt},
+            // 直接生成没有tag的书签
+            send_to_emacs:{key:"Y",func:sendData},
+        };
         // 是否使用新版的链接格式
         var useNewStyleLinks = true;
-
         // 默认使用不选中页面内容的模板
         var temp = template.unselected;
 
@@ -97,7 +103,7 @@
         function btn_submit() {
             var str = document.getElementsByName("box");
             var tbx = document.getElementById("text");
-            // 取出文本框中的
+            // 取出文本框中的值
             var tbx_value = tbx.value;
 
             var chestr = [];
@@ -121,8 +127,8 @@
         };
         // 发送数据
         function sendData(){
-            // 判断页面中是否有选中内容，如果有，则添加内容，切换模板
             var f= "";
+            // 判断页面中是否有选中内容，如果有，则添加内容，切换模板
             if (selectcontent) {
                 selection_tag = selection_tag + "\r\n" + selectcontent;
                 temp = template.selected;
@@ -137,13 +143,17 @@
             location.href = f;
             initData();
         }
+        function showPrompt(){
+            selection_tag = ":"+prompt("请输入Tag:").replace(/^ +/, "").replace(/ +$/, "").replace(/ +/g, ":") + ":";
+            if (selection_tag=="::") selection_tag="";
+            sendData();
+        }
         // 初始化全局变量
         function initData(){
             selection_tag="";
             selectcontent="";
             temp = template.unselected;
         };
-
         function on() {
             document.getElementById(outer_id).style.display = "block";
             document.getElementById('text').focus();
@@ -151,38 +161,18 @@
         function off() {
             document.getElementById(outer_id).style.display = "none";
         };
-
-        function showPrompt(){
-            selection_tag = ":"+prompt("请输入Tag:").replace(/^ +/, "").replace(/ +$/, "").replace(/ +/g, ":") + ":";
-            sendData();
-        }
-
-        // 此处设定快捷键,前置键为Shift+Alt
-        var keybinds = {
-            // 使用tag面板
-            use_tag_panel:{key:"W",func:on},
-            // 使用浏览器自带弹窗,此方式只能手动输入tag
-            use_prompt:{key:"U",func:showPrompt},
-            // 直接生成没有tag的书签
-            send_to_emacs:{key:"Y",func:sendData},
-        };
         // 绑定快捷键
         document.onkeydown = keybind;
         function keybind(e) {
+            // 获取当前页面选中内容
             selectcontent=document.getSelection().toString();
-            if (e.shiftKey && e.altKey && e.keyCode == keybinds.use_tag_panel.key.charCodeAt()) {
-                e.preventDefault();
-                keybinds.use_tag_panel.func();
+            for (var i in keybinds){
+                if (e.shiftKey && e.altKey && e.keyCode == keybinds[i].key.charCodeAt()) {
+                    e.preventDefault();
+                    keybinds[i].func();
+                }
             }
-            else if (e.shiftKey && e.altKey && e.keyCode == keybinds.use_prompt.key.charCodeAt()) {
-                e.preventDefault();
-                keybinds.use_prompt.func();
-            }
-            else if (e.shiftKey && e.altKey && e.keyCode == keybinds.send_to_emacs.key.charCodeAt()) {
-                e.preventDefault();
-                keybinds.send_to_emacs.func();
-            }
-            else if (e.keyCode==13){
+            if (e.keyCode==13){
                 if (document.getElementById(outer_id).style.display=="block") btn_submit();
             }
             else if (e.keyCode==27){
