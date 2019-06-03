@@ -128,6 +128,7 @@
         // 发送数据
         function sendData(){
             var f= "";
+            var title= document.title.length>70 ? document.title.slice(0,65)+"..." : document.title;
             // 判断页面中是否有选中内容，如果有，则添加内容，切换模板
             if (selectcontent) {
                 selection_tag = selection_tag + "\r\n" + selectcontent;
@@ -135,7 +136,7 @@
             }
             // 判断是否使用新风格的链接
             if (useNewStyleLinks) {
-                f = "org-protocol://" + protocol + "?template=" + encodeURIComponent(temp) + '&url=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(selection_tag);
+                f = "org-protocol://" + protocol + "?template=" + encodeURIComponent(temp) + '&url=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(selection_tag);
             }
             else{
                 f = "org-protocol://"+protocol+":/"+encodeURIComponent(temp)+'/'+encodeURIComponent(location.href) +'/'+encodeURIComponent(document.title)+'/'+encodeURIComponent(selection_tag);
